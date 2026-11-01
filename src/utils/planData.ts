@@ -187,11 +187,11 @@ export const CYBER_PHASES = [
 ];
 
 export const DSA_TOPICS = [
-  { topic: 'Arrays & Strings', targetCount: 10, defaultSolved: 3, sampleProblems: ['Two Sum', 'Valid Anagram', 'Sliding Window Maximum', 'Product of Array Except Self'] },
-  { topic: 'Searching & Sorting', targetCount: 8, defaultSolved: 2, sampleProblems: ['Binary Search', 'Search in Rotated Sorted Array', 'Merge Intervals', 'Kth Largest Element'] },
-  { topic: 'Linked Lists', targetCount: 6, defaultSolved: 1, sampleProblems: ['Reverse Linked List', 'Detect Cycle in Linked List', 'Merge Two Sorted Lists', 'LRU Cache Design'] },
-  { topic: 'Stacks & Queues', targetCount: 6, defaultSolved: 1, sampleProblems: ['Valid Parentheses', 'Min Stack', 'Daily Temperatures', 'Sliding Window Queue'] },
-  { topic: 'Trees & BST', targetCount: 8, defaultSolved: 1, sampleProblems: ['Maximum Depth of Binary Tree', 'Invert Binary Tree', 'Lowest Common Ancestor', 'Validate BST'] },
+  { topic: 'Arrays & Strings', targetCount: 10, defaultSolved: 0, sampleProblems: ['Two Sum', 'Valid Anagram', 'Sliding Window Maximum', 'Product of Array Except Self'] },
+  { topic: 'Searching & Sorting', targetCount: 8, defaultSolved: 0, sampleProblems: ['Binary Search', 'Search in Rotated Sorted Array', 'Merge Intervals', 'Kth Largest Element'] },
+  { topic: 'Linked Lists', targetCount: 6, defaultSolved: 0, sampleProblems: ['Reverse Linked List', 'Detect Cycle in Linked List', 'Merge Two Sorted Lists', 'LRU Cache Design'] },
+  { topic: 'Stacks & Queues', targetCount: 6, defaultSolved: 0, sampleProblems: ['Valid Parentheses', 'Min Stack', 'Daily Temperatures', 'Sliding Window Queue'] },
+  { topic: 'Trees & BST', targetCount: 8, defaultSolved: 0, sampleProblems: ['Maximum Depth of Binary Tree', 'Invert Binary Tree', 'Lowest Common Ancestor', 'Validate BST'] },
   { topic: 'Graphs (BFS / DFS)', targetCount: 5, defaultSolved: 0, sampleProblems: ['Number of Islands', 'Clone Graph', 'Course Schedule (Topological Sort)', 'Word Ladder'] },
   { topic: 'Revision & Timed Sets', targetCount: 7, defaultSolved: 0, sampleProblems: ['Mixed mock challenge under 30-minute clock', 'Review bug patterns & edge cases'] },
 ];
@@ -385,54 +385,6 @@ export const SOURCES_LIST: SourceCitation[] = [
   }
 ];
 
-export const INITIAL_PROSPECTS: any[] = [
-  {
-    id: 'demo-1',
-    name: 'Tech & Fitness Creator @alexfit',
-    platform: 'Instagram',
-    service: 'Short-Form Video',
-    contactedDate: '2026-11-28',
-    status: 'Sample Sent',
-    revenue: 0,
-    notes: 'Sent 30s sample workout reel with dynamic subtitles and audio ducking.'
-  },
-  {
-    id: 'demo-2',
-    name: 'ByteCode Academy Podcast',
-    platform: 'Email',
-    service: 'Short-Form Video',
-    contactedDate: '2026-11-29',
-    status: 'Paid Trial',
-    revenue: 1500,
-    notes: 'Approved paid 5-video trial pack at ₹1,500. Delivery scheduled for Dec 2.'
-  },
-  {
-    id: 'demo-3',
-    name: 'Local Artisan Coffee Bar',
-    platform: 'Other',
-    service: 'Website',
-    contactedDate: '2026-11-30',
-    status: 'Contacted',
-    revenue: 0,
-    notes: 'Pitched simple mobile menu landing page with reservation button.'
-  }
-];
+export const INITIAL_PROSPECTS: any[] = [];
 
-export const INITIAL_JOURNAL_ENTRIES = [
-  {
-    id: 'j-1',
-    date: '2026-11-28',
-    topic: 'Linux & Terminal Fundamentals',
-    built: 'Bash script to automate SSH login and file permissions auditing.',
-    solved: 'OverTheWire Bandit levels 0 through 3 (handling spaces and dashed filenames).',
-    unsolved: 'Tar / bzip2 compressed nested files in Bandit level 4.'
-  },
-  {
-    id: 'j-2',
-    date: '2026-11-29',
-    topic: 'Computer Networking & Wireshark',
-    built: 'Custom Wireshark display filter for capturing unencrypted DNS query pairs.',
-    solved: 'Extracted A and AAAA DNS records; analyzed TCP SYN flag in initial handshake.',
-    unsolved: 'Decoding TLS 1.3 encrypted handshake extensions without server keys.'
-  }
-];
+export const INITIAL_JOURNAL_ENTRIES: any[] = [];

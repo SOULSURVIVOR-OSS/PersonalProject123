@@ -101,3 +101,16 @@ test('calculateOverallProgress balances habit, coding, and income metrics', () =
   assert.equal(fullProgress.dsaScore, 100);
   assert.equal(fullProgress.revenueScore, 100);
 });
+
+test('calculateOverallProgress evaluates strictly to 0 on clean slate start', () => {
+  const dailyMap: Record<number, number> = {};
+  for (let i = 1; i <= 39; i++) {
+    dailyMap[i] = 0;
+  }
+  const zeroProgress = calculateOverallProgress(dailyMap, 0, 0, 0);
+  assert.equal(zeroProgress.overallPercentage, 0);
+  assert.equal(zeroProgress.dailyTrackingScore, 0);
+  assert.equal(zeroProgress.dsaScore, 0);
+  assert.equal(zeroProgress.ctfScore, 0);
+  assert.equal(zeroProgress.revenueScore, 0);
+});

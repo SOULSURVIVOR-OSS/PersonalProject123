@@ -33,7 +33,46 @@ import {
   WeeklyReview
 } from './types/plan';
 
-const STORAGE_KEY = 'execution_plan_39_days_v1';
+const STORAGE_KEY = 'execution_plan_39_days_v2';
+
+const createEmptyDailyProgressMap = (): Record<number, DayProgress> => {
+  const initialMap: Record<number, DayProgress> = {};
+  for (let i = 1; i <= 39; i++) {
+    initialMap[i] = {
+      checklist: new Array(12).fill(false),
+      waterChecks: {
+        onWaking: false,
+        afterRun: false,
+        morning: false,
+        lunch: false,
+        afternoon: false,
+        training: false,
+        evening: false,
+      },
+      notes: '',
+    };
+  }
+  return initialMap;
+};
+
+const createEmptyWeeklyReviews = (): WeeklyReview[] => [
+  { weekNumber: 1, dates: 'Nov 28 – Dec 4', sleepHoursAvg: 0, runningSessions: 0, kickboxingSessions: 0, gymSessions: 0, proteinDaysMet: 0, cyberHours: 0, dsaHours: 0, webHours: 0, ctfSolved: 0, outreachSent: 0, notes: '' },
+  { weekNumber: 2, dates: 'Dec 5 – Dec 11', sleepHoursAvg: 0, runningSessions: 0, kickboxingSessions: 0, gymSessions: 0, proteinDaysMet: 0, cyberHours: 0, dsaHours: 0, webHours: 0, ctfSolved: 0, outreachSent: 0, notes: '' },
+  { weekNumber: 3, dates: 'Dec 12 – Dec 18', sleepHoursAvg: 0, runningSessions: 0, kickboxingSessions: 0, gymSessions: 0, proteinDaysMet: 0, cyberHours: 0, dsaHours: 0, webHours: 0, ctfSolved: 0, outreachSent: 0, notes: '' },
+  { weekNumber: 4, dates: 'Dec 19 – Dec 25', sleepHoursAvg: 0, runningSessions: 0, kickboxingSessions: 0, gymSessions: 0, proteinDaysMet: 0, cyberHours: 0, dsaHours: 0, webHours: 0, ctfSolved: 0, outreachSent: 0, notes: '' },
+  { weekNumber: 5, dates: 'Dec 26 – Jan 1', sleepHoursAvg: 0, runningSessions: 0, kickboxingSessions: 0, gymSessions: 0, proteinDaysMet: 0, cyberHours: 0, dsaHours: 0, webHours: 0, ctfSolved: 0, outreachSent: 0, notes: '' },
+  { weekNumber: 6, dates: 'Jan 2 – Jan 5', sleepHoursAvg: 0, runningSessions: 0, kickboxingSessions: 0, gymSessions: 0, proteinDaysMet: 0, cyberHours: 0, dsaHours: 0, webHours: 0, ctfSolved: 0, outreachSent: 0, notes: '' },
+];
+
+const createEmptyDsaCounts = (): Record<string, number> => ({
+  'Arrays & Strings': 0,
+  'Searching & Sorting': 0,
+  'Linked Lists': 0,
+  'Stacks & Queues': 0,
+  'Trees & BST': 0,
+  'Graphs (BFS / DFS)': 0,
+  'Revision & Timed Sets': 0,
+});
 
 export default function App() {
   // Theme state: defaults to dark restful
@@ -65,6 +104,9 @@ export default function App() {
     setIsDark((prev) => !prev);
   };
 
+  // Cycle Activation State
+  const [cycleStarted, setCycleStarted] = useState<boolean>(false);
+
   // Navigation & Day State
   const [currentDay, setCurrentDay] = useState<number>(1);
   const [activeTab, setActiveTab] = useState<string>('overview');
@@ -78,201 +120,33 @@ export default function App() {
     current5KTime: '34:00',
   });
 
-  // Daily Progress Map (day 1..39)
-  const [dailyProgressMap, setDailyProgressMap] = useState<Record<number, DayProgress>>(() => {
-    const initialMap: Record<number, DayProgress> = {};
-    for (let i = 1; i <= 39; i++) {
-      initialMap[i] = {
-        checklist: new Array(12).fill(false),
-        waterChecks: {
-          onWaking: false,
-          afterRun: false,
-          morning: false,
-          lunch: false,
-          afternoon: false,
-          training: false,
-          evening: false,
-        },
-        notes: '',
-      };
-    }
-    // Seed day 1 with some progress
-    initialMap[1].checklist[0] = true; // sleep
-    initialMap[1].checklist[1] = true; // water
-    initialMap[1].waterChecks.onWaking = true;
-    initialMap[1].waterChecks.afterRun = true;
-    initialMap[1].notes = 'Day 1 kick-off: OverTheWire Bandit lab set up, 5K easy run completed.';
-    return initialMap;
-  });
+  // Daily Progress Map (day 1..39) initialized completely to 0
+  const [dailyProgressMap, setDailyProgressMap] = useState<Record<number, DayProgress>>(createEmptyDailyProgressMap);
 
-  // Weight Logs
-  const [weightLogs, setWeightLogs] = useState<WeightEntry[]>([
-    { id: 'w-1', date: '2026-11-28', weight: 70.4 },
-    { id: 'w-2', date: '2026-11-29', weight: 70.1 },
-    { id: 'w-3', date: '2026-11-30', weight: 69.8 },
-  ]);
+  // Weight Logs - initialized empty (0 logs)
+  const [weightLogs, setWeightLogs] = useState<WeightEntry[]>([]);
 
-  // Run Logs
-  const [runLogs, setRunLogs] = useState<RunLogEntry[]>([
-    {
-      id: 'r-1',
-      date: '2026-11-28',
-      distanceKm: 5.0,
-      minutes: 29,
-      seconds: 40,
-      paceFormatted: '5:56/km',
-      isSub30: true,
-      type: 'Intervals',
-      notes: 'Controlled 6x1 min fast intervals; form stayed upright.',
-    },
-    {
-      id: 'r-2',
-      date: '2026-11-29',
-      distanceKm: 4.0,
-      minutes: 26,
-      seconds: 15,
-      paceFormatted: '6:34/km',
-      isSub30: false,
-      type: 'Recovery',
-      notes: 'Easy conversational recovery run.',
-    },
-  ]);
+  // Run Logs - initialized empty (0 runs)
+  const [runLogs, setRunLogs] = useState<RunLogEntry[]>([]);
 
-  // Technical Journal
-  const [journalEntries, setJournalEntries] = useState<TechnicalJournalEntry[]>(INITIAL_JOURNAL_ENTRIES);
+  // Technical Journal - initialized empty (0 entries)
+  const [journalEntries, setJournalEntries] = useState<TechnicalJournalEntry[]>([]);
 
-  // Side Hustle Prospects
-  const [prospects, setProspects] = useState<ProspectEntry[]>(INITIAL_PROSPECTS);
+  // Side Hustle Prospects - initialized empty (0 prospects, 0 revenue)
+  const [prospects, setProspects] = useState<ProspectEntry[]>([]);
 
-  // Weekly Reviews (6 weeks)
-  const [weeklyReviews, setWeeklyReviews] = useState<WeeklyReview[]>([
-    {
-      weekNumber: 1,
-      dates: 'Nov 28 – Dec 4',
-      sleepHoursAvg: 7.5,
-      runningSessions: 5,
-      kickboxingSessions: 2,
-      gymSessions: 2,
-      proteinDaysMet: 7,
-      cyberHours: 13,
-      dsaHours: 9,
-      webHours: 9,
-      ctfSolved: 4,
-      outreachSent: 15,
-      notes: 'Great routine established. Bandit levels 0-10 complete.',
-    },
-    {
-      weekNumber: 2,
-      dates: 'Dec 5 – Dec 11',
-      sleepHoursAvg: 7.5,
-      runningSessions: 5,
-      kickboxingSessions: 2,
-      gymSessions: 2,
-      proteinDaysMet: 7,
-      cyberHours: 14,
-      dsaHours: 9,
-      webHours: 9,
-      ctfSolved: 4,
-      outreachSent: 20,
-      notes: 'Building Project 1 Python Recon scanner.',
-    },
-    {
-      weekNumber: 3,
-      dates: 'Dec 12 – Dec 18',
-      sleepHoursAvg: 7.5,
-      runningSessions: 5,
-      kickboxingSessions: 2,
-      gymSessions: 2,
-      proteinDaysMet: 7,
-      cyberHours: 14,
-      dsaHours: 9,
-      webHours: 9,
-      ctfSolved: 4,
-      outreachSent: 15,
-      notes: 'PortSwigger web security labs & React app setup.',
-    },
-    {
-      weekNumber: 4,
-      dates: 'Dec 19 – Dec 25',
-      sleepHoursAvg: 7.5,
-      runningSessions: 5,
-      kickboxingSessions: 2,
-      gymSessions: 2,
-      proteinDaysMet: 7,
-      cyberHours: 13,
-      dsaHours: 9,
-      webHours: 9,
-      ctfSolved: 4,
-      outreachSent: 15,
-      notes: 'picoCTF category challenges & tempo run pace holding.',
-    },
-    {
-      weekNumber: 5,
-      dates: 'Dec 26 – Jan 1',
-      sleepHoursAvg: 7.5,
-      runningSessions: 5,
-      kickboxingSessions: 2,
-      gymSessions: 2,
-      proteinDaysMet: 7,
-      cyberHours: 14,
-      dsaHours: 9,
-      webHours: 9,
-      ctfSolved: 4,
-      outreachSent: 15,
-      notes: 'NetWatch deployment & live CTF participation.',
-    },
-    {
-      weekNumber: 6,
-      dates: 'Jan 2 – Jan 5',
-      sleepHoursAvg: 8.0,
-      runningSessions: 3,
-      kickboxingSessions: 1,
-      gymSessions: 1,
-      proteinDaysMet: 4,
-      cyberHours: 8,
-      dsaHours: 6,
-      webHours: 6,
-      ctfSolved: 3,
-      outreachSent: 10,
-      notes: 'Final 5K timed assessment & GitHub portfolio write-ups.',
-    },
-  ]);
+  // Weekly Reviews (6 weeks) - all metrics at 0
+  const [weeklyReviews, setWeeklyReviews] = useState<WeeklyReview[]>(createEmptyWeeklyReviews);
 
-  // DSA Problem counts
-  const [dsaCounts, setDsaCounts] = useState<Record<string, number>>({
-    'Arrays & Strings': 4,
-    'Searching & Sorting': 2,
-    'Linked Lists': 2,
-    'Stacks & Queues': 1,
-    'Trees & BST': 1,
-    'Graphs (BFS / DFS)': 0,
-    'Revision & Timed Sets': 0,
-  });
+  // DSA Problem counts - all at 0
+  const [dsaCounts, setDsaCounts] = useState<Record<string, number>>(createEmptyDsaCounts);
 
-  // Checkbox maps
-  const [completedTasks, setCompletedTasks] = useState<Record<string, boolean>>({
-    'cyber-p1-lab-0': true,
-  });
-  const [completedMilestones, setCompletedMilestones] = useState<Record<string, boolean>>({
-    'projA-d0': true,
-    'web-m-0': true,
-  });
-  const [completedSkills, setCompletedSkills] = useState<Record<string, boolean>>({
-    'skill-0': true,
-    'skill-1': true,
-  });
-  const [completedFinalDeliverables, setCompletedFinalDeliverables] = useState<Record<string, boolean>>({
-    'deliv-cyber-bandit': true,
-  });
-  const [completedRules, setCompletedRules] = useState<Record<number, boolean>>({
-    1: true,
-    2: true,
-    3: true,
-    4: true,
-    8: true,
-    9: true,
-    10: true,
-  });
+  // Checkbox maps - all empty (0 completed)
+  const [completedTasks, setCompletedTasks] = useState<Record<string, boolean>>({});
+  const [completedMilestones, setCompletedMilestones] = useState<Record<string, boolean>>({});
+  const [completedSkills, setCompletedSkills] = useState<Record<string, boolean>>({});
+  const [completedFinalDeliverables, setCompletedFinalDeliverables] = useState<Record<string, boolean>>({});
+  const [completedRules, setCompletedRules] = useState<Record<number, boolean>>({});
 
   // Notification Banner
   const [notification, setNotification] = useState<string | null>(null);
@@ -283,6 +157,7 @@ export default function App() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
+        if (typeof parsed.cycleStarted === 'boolean') setCycleStarted(parsed.cycleStarted);
         if (parsed.currentDay) setCurrentDay(parsed.currentDay);
         if (parsed.dailyProgressMap) setDailyProgressMap(parsed.dailyProgressMap);
         if (parsed.userProfile) setUserProfile(parsed.userProfile);
@@ -307,6 +182,7 @@ export default function App() {
   useEffect(() => {
     try {
       const stateToSave = {
+        cycleStarted,
         currentDay,
         dailyProgressMap,
         userProfile,
@@ -327,6 +203,7 @@ export default function App() {
       console.warn('Could not save plan state:', e);
     }
   }, [
+    cycleStarted,
     currentDay,
     dailyProgressMap,
     userProfile,
@@ -378,7 +255,7 @@ export default function App() {
   });
 
   const totalRevenue = prospects.reduce((acc, p) => acc + (p.revenue || 0), 0);
-  const ctfSolvedCount = journalEntries.filter((j) => j.solved && j.solved.length > 0).length + 3;
+  const ctfSolvedCount = journalEntries.filter((j) => j.solved && j.solved.length > 0).length;
 
   const {
     overallPercentage,
@@ -468,11 +345,43 @@ export default function App() {
     showToast(`Day ${currentDay} checklist reset.`);
   };
 
+  const handleStartCycle = () => {
+    setCycleStarted(true);
+    setCurrentDay(1);
+    setDailyProgressMap(createEmptyDailyProgressMap());
+    setWeightLogs([]);
+    setRunLogs([]);
+    setJournalEntries([]);
+    setProspects([]);
+    setWeeklyReviews(createEmptyWeeklyReviews());
+    setDsaCounts(createEmptyDsaCounts());
+    setCompletedTasks({});
+    setCompletedMilestones({});
+    setCompletedSkills({});
+    setCompletedFinalDeliverables({});
+    setCompletedRules({});
+    showToast('The 39-Day Execution Cycle has begun! All trackers initialized at 0.');
+  };
+
   const handleResetAllData = () => {
-    if (window.confirm('Reset all tracked progress to the default starting plan?')) {
+    setCycleStarted(false);
+    setCurrentDay(1);
+    setDailyProgressMap(createEmptyDailyProgressMap());
+    setWeightLogs([]);
+    setRunLogs([]);
+    setJournalEntries([]);
+    setProspects([]);
+    setWeeklyReviews(createEmptyWeeklyReviews());
+    setDsaCounts(createEmptyDsaCounts());
+    setCompletedTasks({});
+    setCompletedMilestones({});
+    setCompletedSkills({});
+    setCompletedFinalDeliverables({});
+    setCompletedRules({});
+    try {
       localStorage.removeItem(STORAGE_KEY);
-      window.location.reload();
-    }
+    } catch {}
+    showToast('All metrics reset to 0.');
   };
 
   // Run Logging
@@ -592,6 +501,9 @@ export default function App() {
             dsaScore={dsaScore}
             ctfScore={ctfScore}
             revenueScore={revenueScore}
+            cycleStarted={cycleStarted}
+            onStartCycle={handleStartCycle}
+            onResetCycle={handleResetAllData}
           />
         )}
 

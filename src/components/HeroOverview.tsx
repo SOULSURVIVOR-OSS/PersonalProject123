@@ -1,5 +1,5 @@
 import React from 'react';
-import { Terminal, Activity, TrendingUp, CheckSquare, Clock, Moon, Dumbbell, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Terminal, Activity, TrendingUp, CheckSquare, Clock, Moon, Dumbbell, ShieldCheck, ArrowRight, Play, RotateCcw } from 'lucide-react';
 import { DayInfo } from '../utils/planCalculations';
 
 interface HeroOverviewProps {
@@ -11,6 +11,9 @@ interface HeroOverviewProps {
   dsaScore: number;
   ctfScore: number;
   revenueScore: number;
+  cycleStarted: boolean;
+  onStartCycle: () => void;
+  onResetCycle: () => void;
 }
 
 export const HeroOverview: React.FC<HeroOverviewProps> = ({
@@ -22,10 +25,59 @@ export const HeroOverview: React.FC<HeroOverviewProps> = ({
   dsaScore,
   ctfScore,
   revenueScore,
+  cycleStarted,
+  onStartCycle,
+  onResetCycle,
 }) => {
   return (
-    <section className="pt-8 pb-12 border-b border-[#2C362E]">
+    <section className="pt-6 pb-12 border-b border-[#2C362E]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Prominent Square-Edged 39-Day Launch Banner */}
+        <div className="mb-8 p-6 sm:p-7 bg-[#172019] border-2 border-[#8DA988] transition-all duration-200">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="space-y-1.5 max-w-2xl">
+              <div className="flex items-center gap-2">
+                <span className={`w-2.5 h-2.5 ${cycleStarted ? 'bg-[#8DA988] animate-pulse' : 'bg-[#C98F8A]'}`} />
+                <span className="text-xs uppercase tracking-widest font-mono text-[#8DA988] font-bold">
+                  {cycleStarted ? 'Execution Cycle In Progress · Day 1 Active' : 'Official Launchpad · Ready to Begin'}
+                </span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-light text-[#E5EBE6] tracking-tight">
+                {cycleStarted ? (
+                  <>The 39-Day Execution is <span className="font-semibold text-[#8DA988]">Active</span></>
+                ) : (
+                  <>Start the Whole <span className="font-semibold text-[#8DA988]">39 Days</span></>
+                )}
+              </h2>
+              <p className="text-xs sm:text-sm text-[#9EABA0] leading-relaxed">
+                {cycleStarted
+                  ? 'All trackers are live from Day 1. Complete your daily checklist, log your 5K runs, solve your DSA sets, and record networking labs.'
+                  : 'Zero fluff, complete focus. Click the button below to initialize the entire 39-day timeline with a clean slate of 0s across all routines, fitness records, and earnings.'}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <button
+                onClick={onStartCycle}
+                className="px-8 py-4 bg-[#8DA988] hover:bg-[#9CB897] active:bg-[#7D9A78] text-[#111612] font-bold text-sm sm:text-base tracking-wide uppercase transition-all duration-150 flex items-center gap-3 cursor-pointer shadow-lg hover:-translate-y-0.5 active:translate-y-0"
+              >
+                <Play className="w-5 h-5 fill-current" />
+                <span>{cycleStarted ? 'Restart Whole 39 Days' : 'Start The Whole 39 Days'}</span>
+              </button>
+
+              {cycleStarted && (
+                <button
+                  onClick={onResetCycle}
+                  className="px-5 py-4 bg-[#1E2520] hover:bg-[#27322A] active:bg-[#1A211B] text-[#C98F8A] hover:text-[#DC9F9A] border border-[#3A493D] font-semibold text-xs tracking-wider uppercase transition-all duration-150 flex items-center gap-2 cursor-pointer"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Reset All to 0</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
         {/* Top Kicker & Calming Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
