@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* Theme tokens - Dark Restful (Default) */
+    --bg-canvas: #141815;
+    --bg-surface: #1B211C;
+    --bg-surface-elevated: #222923;
+    --bg-surface-subtle: #181E19;
+    --border-subtle: #2C362E;
+    --border-strong: #3D4A3F;
+    --text-primary: #E5EBE6;
+    --text-secondary: #9EABA0;
+    --text-muted: #748277;
+
+    /* Accent Sage */
+    --sage-accent: #8DA988;
+    --sage-accent-hover: #A1BD9C;
+    --sage-surface: #1E2720;
+    --sage-border: #354738;
+    --sage-text: #B4CCB0;
+
+    /* Accent Dusty Rose */
+    --rose-accent: #C98F8A;
+    --rose-accent-hover: #D9A29D;
+    --rose-surface: #261D1E;
+    --rose-border: #4A3335;
+    --rose-text: #E5B2AE;
+  }
+
+  /* Optional Light mode when .light class is present on html */
+  html.light {
+    --bg-canvas: #F8F9F6;
+    --bg-surface: #FFFFFF;
+    --bg-surface-elevated: #FAFBF9;
+    --bg-surface-subtle: #EFF3EC;
+    --border-subtle: #E2E6DF;
+    --border-strong: #D0D8CD;
+    --text-primary: #28302A;
+    --text-secondary: #5C675E;
+    --text-muted: #818D83;
+
+    --sage-accent: #5F745C;
+    --sage-accent-hover: #4F624C;
+    --sage-surface: #EFF4EE;
+    --sage-border: #D1DDCF;
+    --sage-text: #3D503B;
+
+    --rose-accent: #A66661;
+    --rose-accent-hover: #915450;
+    --rose-surface: #FAF2F2;
+    --rose-border: #E8D5D4;
+    --rose-text: #824744;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition: background-color 200ms ease, color 200ms ease;
+  }
+
+  /* Dark mode optical compensation */
+  .tracking-opt {
+    letter-spacing: 0.01em;
+  }
+
+  /* Custom subtle dark scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #141815;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2E3830;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #415044;
+  }
+}
+
+/* Subtle transitions for mindful calm feel */
+.smooth-hover {
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
